@@ -21,6 +21,7 @@
     <button class="nav-btn active" data-page="home">Overview</button>
     <button class="nav-btn" data-page="statewise">State Analysis</button>
     <button class="nav-btn" data-page="eda">EDA</button>
+    <button class="nav-btn" data-page="hypothesis">Hypothesis Lab</button>
   </div>
   <div class="nav-meta">NCB Data 2018–2024</div>
 </nav>
@@ -256,6 +257,26 @@
   </section>
 </div>
 
+<!-- ═══════════════ PAGE: HYPOTHESIS ═══════════════ -->
+<div id="page-hypothesis" class="page">
+  <section class="section">
+    <div class="section-header">
+      <h2>Hypothesis Testing Lab 🧪</h2>
+      <p>Statistical validation of patterns using non-parametric tests</p>
+    </div>
+
+    <!-- Hypothesis Cards -->
+    <div id="hypothesis-container" class="hypothesis-grid">
+      <p class="placeholder-text">Click below to run hypothesis tests</p>
+    </div>
+
+    <!-- Run Button -->
+    <div style="text-align:center; margin-top:20px;">
+      <button class="apply-btn" onclick="loadHypothesis()">Run Tests ⚡</button>
+    </div>
+  </section>
+</div>
+
 <!-- FOOTER -->
 <footer class="footer">
   <p>DrugWatch India · Data sourced from National Crime Bureau (NCB) Reports · Built for academic analysis</p>
@@ -264,5 +285,6 @@
 <script src="data.js"></script>
 <script src="script.js"></script>
 <script src="eda.js"></script>
+<script src="hypothesis.js"></script>
 </body>
 </html>

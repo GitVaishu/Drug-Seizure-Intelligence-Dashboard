@@ -519,3 +519,25 @@ select:focus { border-color: var(--accent); }
   .hero-stats { flex-wrap: wrap; gap: 24px; }
   .hero-title { font-size: 52px; }
 }
+
+.hypothesis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.hyp-card {
+  background: #111;
+  border: 1px solid #222;
+  padding: 20px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.hyp-card:hover {
+  transform: translateY(-5px);
+  border-color: #00ffcc;
+}
+
+.green { color: #00ff88; }
+.red { color: #ff4d4d; }
