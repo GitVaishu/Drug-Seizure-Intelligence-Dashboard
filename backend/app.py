@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional
 from data_loader import load_data
-from hypothesis_testing import run_tests
-from hypothesis_testing import get_all_states
+from hypothesis_testing import run_tests, get_all_states
+from ml_models.clustering import cluster_states
+import pandas as pd
 
 app = FastAPI()
 
@@ -41,6 +42,13 @@ def hypothesis(
 ):
     return JSONResponse(run_tests(state, year_from, year_to))
 
-@app.get("/states")
-def get_states():
-    return sorted(df['State'].dropna().unique().tolist())
+
+@app.get("/clusters")
+def get_clusters():
+    result = cluster_states(df)
+    return result.to_dict(orient="records")
+
+
+@app.get("/check-columns")
+def check_columns():
+    return list(df.columns)
