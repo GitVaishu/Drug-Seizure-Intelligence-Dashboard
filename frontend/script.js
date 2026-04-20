@@ -97,9 +97,11 @@ document.querySelectorAll(".nav-btn").forEach((btn) => {
       initEDA();
       window._edaInit = true;
     }
-    if (btn.dataset.page === "ml" && !window._mlInit) {
-      initML();
-      window._mlInit = true;
+    if (this.dataset.page === "ml") {
+      setTimeout(() => {
+        initML();
+        updateForecast();
+      }, 100);
     }
   });
 });
@@ -529,93 +531,92 @@ function applyStateFilters() {
     },
     PC,
   );
-}
-let ML_DATA = [];
-async function initML() {
-  // 🔹 Fetch clustering data
-  const res = await fetch("http://127.0.0.1:8000/clusters");
-  ML_DATA = await res.json();
+  async function initML() {
+    // 🔹 Fetch clustering data
+    const res = await fetch("http://127.0.0.1:8000/clusters");
+    ML_DATA = await res.json();
 
-  // Group by risk level
+    // Group by risk level
 
-  renderML("High Risk"); // 🔥 Add insight text
-  const topState = highRisk[0];
+    renderML("High Risk"); // 🔥 Add insight text
 
-  document.getElementById("ml-clusters").insertAdjacentHTML(
-    "beforeend",
-    `<p style="margin-top:10px;">
+    document.getElementById("ml-clusters").insertAdjacentHTML(
+      "beforeend",
+      `<p style="margin-top:10px;">
      ⚠️ <b>${topState.State_UT}</b> has the highest risk with 
      ${Math.round(topState.Total_Kg)} kg seized.
    </p>`,
-  );
-}
-function renderML(riskType = "High Risk") {
-  document.querySelectorAll(".ml-btn").forEach((btn) => {
-    btn.classList.remove("active");
-
-    const btnType = btn.innerText.trim().toLowerCase();
-
-    if (
-      (riskType === "High Risk" && btnType === "high") ||
-      (riskType === "Medium Risk" && btnType === "medium") ||
-      (riskType === "Low Risk" && btnType === "low")
-    ) {
-      btn.classList.add("active");
-    }
-  });
-  const filtered = ML_DATA.filter((d) => d.risk_level === riskType)
-    .sort((a, b) => b.Total_Kg - a.Total_Kg)
-    .slice(0, 5);
-
-  Plotly.newPlot(
-    "ml-clusters",
-    [
-      {
-        x: filtered.map((d) => d.State_UT),
-        y: filtered.map((d) => d.Total_Kg),
-        type: "bar",
-
-        hovertemplate:
-          "<b>%{x}</b><br>" +
-          "Total Seized: %{y:,.0f} kg<br>" +
-          `Category: ${riskType}<br>` +
-          "<extra></extra>",
-
-        marker: {
-          color:
-            riskType === "High Risk"
-              ? "#3394ef"
-              : riskType === "Medium Risk"
-                ? "#facc15"
-                : "#22c55e",
-        },
-      },
-    ],
-    {
-      ...PL,
-      title: {
-        text: `Top ${filtered.length} ${riskType} States`,
-      },
-      xaxis: { title: "State" },
-      yaxis: { title: "Total Kg Seized" },
-    },
-    PC,
-  );
-  // 🔥 ADD THIS AT THE END
-  const topState = filtered[0];
-
-  if (!topState) {
-    document.getElementById("ml-insight").innerHTML = "No data available.";
-    return;
+    );
   }
+  function renderML(riskType = "High Risk") {
+    document.querySelectorAll(".ml-btn").forEach((btn) => {
+      btn.classList.remove("active");
 
-  const avg = ML_DATA.reduce((sum, d) => sum + d.Total_Kg, 0) / ML_DATA.length;
+      const btnType = btn.innerText.trim().toLowerCase();
 
-  const pctAbove = ((topState.Total_Kg - avg) / avg) * 100;
+      if (
+        (riskType === "High Risk" && btnType === "high") ||
+        (riskType === "Medium Risk" && btnType === "medium") ||
+        (riskType === "Low Risk" && btnType === "low")
+      ) {
+        btn.classList.add("active");
+      }
+    });
+    const filtered = ML_DATA.filter((d) => d.risk_level === riskType)
+      .sort((a, b) => b.Total_Kg - a.Total_Kg)
+      .slice(0, 5);
 
-  document.getElementById("ml-insight").innerHTML = `
+    Plotly.newPlot(
+      "ml-clusters",
+      [
+        {
+          x: filtered.map((d) => d.State_UT),
+          y: filtered.map((d) => d.Total_Kg),
+          type: "bar",
+
+          hovertemplate:
+            "<b>%{x}</b><br>" +
+            "Total Seized: %{y:,.0f} kg<br>" +
+            `Category: ${riskType}<br>` +
+            "<extra></extra>",
+
+          marker: {
+            color:
+              riskType === "High Risk"
+                ? "#3394ef"
+                : riskType === "Medium Risk"
+                  ? "#facc15"
+                  : "#22c55e",
+          },
+        },
+      ],
+      {
+        ...PL,
+        title: {
+          text: `Top ${filtered.length} ${riskType} States`,
+        },
+        xaxis: { title: "State" },
+        yaxis: { title: "Total Kg Seized" },
+      },
+      PC,
+    );
+    // 🔥 ADD THIS AT THE END
+    const topState = filtered[0];
+
+    if (!topState) {
+      document.getElementById("ml-insight").innerHTML = "No data available.";
+      return;
+    }
+
+    const avg =
+      ML_DATA.reduce((sum, d) => sum + d.Total_Kg, 0) / ML_DATA.length;
+
+    const pctAbove = ((topState.Total_Kg - avg) / avg) * 100;
+
+    document.getElementById("ml-insight").innerHTML = `
   <b>${topState.State_UT}</b> leads the <b>${riskType}</b> group with 
   <b>${Math.round(topState.Total_Kg).toLocaleString()} kg</b> seized,
   which is <b>${pctAbove.toFixed(1)}%</b> above the national average.
 `;
+  }
 }

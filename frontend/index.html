@@ -301,8 +301,38 @@
     <!-- Insight -->
     <div id="ml-insight" class="insight-text"></div>
 
-  </div>
-</div>
+     <!-- 🔮 Forecast Section -->
+      <div class="section-header" style="margin-top:40px;">
+        <h2>Forecasting</h2>
+        <p>Select a year and explore future predictions</p>
+      </div>
+      <!-- Year Toggle -->
+      <div style="margin: 10px 0;">
+        <label>Select Year:</label>
+        <select id="forecast-year" onchange="updateForecast()">
+          <option>2025</option>
+          <option>2026</option>
+          <option>2027</option>
+          <option>2028</option>
+          <option>2029</option>
+          <option>2030</option>
+          <option>2031</option>
+          <option>2032</option>
+          <option>2033</option>
+          <option>2034</option>
+          <option>2035</option>
+        </select>
+      </div>
+      <!-- India Map -->
+      <div id="forecast-map" style="height:500px; margin-top:20px;"></div>
+      <!-- Chart -->
+      <div id="forecast-chart" style="height:400px; margin-top:20px;"></div>
+
+      <!-- Insight -->
+       <div id="forecast-insight" class="insight-text"></div>
+      </div>
+    
+
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -313,5 +343,6 @@
 <script src="script.js"></script>
 <script src="eda.js"></script>
 <script src="hypothesis.js"></script>
+<script src="ml.js  "></script>
 </body>
 </html>

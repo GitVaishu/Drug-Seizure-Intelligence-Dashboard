@@ -2,6 +2,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional
+from ml_models.forecasting import forecast_states
 from data_loader import load_data
 from hypothesis_testing import run_tests, get_all_states
 from ml_models.clustering import cluster_states
@@ -52,3 +53,8 @@ def get_clusters():
 @app.get("/check-columns")
 def check_columns():
     return list(df.columns)
+
+@app.get("/forecast")
+def get_forecast(years: int = 2):
+    return forecast_states(df, years=years)
+
