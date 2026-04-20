@@ -233,7 +233,7 @@ async function updateForecast() {
     renderForecastChart(FORECAST_DATA[0].State_UT);
   }
 
-  updateForecastMap();
+  updateForecastMap(selectedYear);
 }
 
 // ================= LOAD =================

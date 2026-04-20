@@ -97,10 +97,11 @@ document.querySelectorAll(".nav-btn").forEach((btn) => {
       initEDA();
       window._edaInit = true;
     }
-    if (btn.dataset.page === "ml" && !window._mlInit) {
-      initML();
-      updateForecast(); // 🔥 ADD THIS LINE
-      window._mlInit = true;
+    if (this.dataset.page === "ml") {
+      setTimeout(() => {
+        initML();
+        updateForecast();
+      }, 100);
     }
   });
 });

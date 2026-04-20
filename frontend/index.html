@@ -1,465 +1,348 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DrugWatch India — NCB Seizure Intelligence</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <!-- NAV -->
-    <nav class="navbar">
-      <div class="nav-brand">
-        <span class="brand-icon">⬡</span>
-        <span class="brand-name">DrugWatch<em>India</em></span>
-      </div>
-      <div class="nav-tabs">
-        <button class="nav-btn active" data-page="home">Overview</button>
-        <button class="nav-btn" data-page="statewise">State Analysis</button>
-        <button class="nav-btn" data-page="eda">EDA</button>
-        <button class="nav-btn" data-page="ml">ML Insights</button>
-      </div>
-      <div class="nav-meta">NCB Data 2018–2024</div>
-    </nav>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DrugWatch India — NCB Seizure Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-    <!-- ═══════════════ PAGE: HOME ═══════════════ -->
-    <div id="page-home" class="page active">
-      <!-- HERO -->
-      <section class="hero">
-        <div class="hero-bg-grid"></div>
-        <div class="hero-content">
-          <div class="hero-tag">
-            National Crime Bureau · Intelligence Report
-          </div>
-          <h1 class="hero-title">
-            Drug Seizure<br /><span class="accent">Intelligence</span
-            ><br />Dashboard
-          </h1>
-          <p class="hero-desc">
-            A comprehensive forensic analysis of drug trafficking patterns
-            across India from 2018 to 2024 — mapping geography, enforcement, and
-            substance trends to uncover how narcotics flow through the nation.
-          </p>
-          <div class="hero-why">
-            <div class="why-card">
-              <div class="why-icon">📍</div>
-              <h4>Why This Project?</h4>
-              <p>
-                India sits at the crossroads of the Golden Crescent and Golden
-                Triangle — two of the world's largest drug-producing zones.
-                Border and coastal states face disproportionate trafficking
-                pressure, yet enforcement data is rarely visualized
-                holistically. This dashboard bridges that gap.
-              </p>
-            </div>
-            <div class="why-card">
-              <div class="why-icon">🎯</div>
-              <h4>What We Analyse</h4>
-              <p>
-                7 years · 36 states/UTs · 20+ drug types · enforcement KPIs ·
-                geographic risk scoring — all woven into an interactive
-                intelligence interface built on NCB's official seizure records.
-              </p>
-            </div>
-            <div class="why-card">
-              <div class="why-icon">🔬</div>
-              <h4>Our Methodology</h4>
-              <p>
-                Feature engineering on raw NCB data: Risk Index (weighted
-                quantity + cases + diversity), Growth Rate (YoY %), Arrest Rate,
-                Drug Diversity score, and Border/Coastal classification for
-                geographic risk.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="hero-stats">
-          <div class="h-stat" id="hs-total"></div>
-          <div class="h-stat" id="hs-cases"></div>
-          <div class="h-stat" id="hs-arrested"></div>
-          <div class="h-stat" id="hs-states"></div>
-        </div>
-      </section>
-
-      <!-- HOME OVERVIEW CHARTS -->
-      <section class="section">
-        <div class="section-header">
-          <h2>National Snapshot</h2>
-          <p>High-level view across all states and years</p>
-        </div>
-        <div class="chart-grid-2">
-          <div class="chart-box" id="home-trend"></div>
-          <div class="chart-box" id="home-topstates"></div>
-        </div>
-        <div class="chart-grid-2" style="margin-top: 24px">
-          <div class="chart-box" id="home-border"></div>
-          <div class="chart-box" id="home-drugs"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ═══════════════ PAGE: STATE ANALYSIS ═══════════════ -->
-    <div id="page-statewise" class="page">
-      <section class="section">
-        <div class="section-header">
-          <h2>State-wise Analysis</h2>
-          <p>Click a state on the map — or use the filters below</p>
-        </div>
-
-        <!-- India Map -->
-        <div class="map-container">
-          <div id="india-map"></div>
-          <div class="map-legend">
-            <div class="legend-label">Low Risk</div>
-            <div class="legend-bar"></div>
-            <div class="legend-label">High Risk</div>
-          </div>
-        </div>
-
-        <!-- State Filter Controls -->
-        <div class="state-controls">
-          <div class="control-group">
-            <label>State / UT</label>
-            <select id="stateFilter"></select>
-          </div>
-          <div class="control-group">
-            <label>Year</label>
-            <select id="yearFilter"></select>
-          </div>
-          <button class="apply-btn" onclick="applyStateFilters()">
-            → Apply
-          </button>
-        </div>
-
-        <!-- KPI Cards -->
-        <div class="kpi-row" id="kpi-row">
-          <div class="kpi" id="kpi-risk">
-            <span class="kpi-label">Risk Index</span
-            ><span class="kpi-val" id="risk">—</span>
-          </div>
-          <div class="kpi" id="kpi-arrest">
-            <span class="kpi-label">Arrest Rate</span
-            ><span class="kpi-val" id="arrest">—</span>
-          </div>
-          <div class="kpi" id="kpi-growth">
-            <span class="kpi-label">Growth Rate</span
-            ><span class="kpi-val" id="growth">—</span>
-          </div>
-          <div class="kpi" id="kpi-diversity">
-            <span class="kpi-label">Drug Diversity</span
-            ><span class="kpi-val" id="diversity">—</span>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">Total Cases</span
-            ><span class="kpi-val" id="kpi-cases">—</span>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">Total Arrested</span
-            ><span class="kpi-val" id="kpi-arrested">—</span>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">Total Qty (kg/units)</span
-            ><span class="kpi-val" id="kpi-qty">—</span>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">Border State</span
-            ><span class="kpi-val" id="kpi-border">—</span>
-          </div>
-          <div class="kpi">
-            <span class="kpi-label">Coastal State</span
-            ><span class="kpi-val" id="kpi-coastal">—</span>
-          </div>
-        </div>
-
-        <!-- Drug Breakdown Table -->
-        <div class="table-section">
-          <h3 class="table-title">
-            Full Drug Breakdown —
-            <span id="table-state-label">Select a state</span>
-          </h3>
-          <div id="drug-table-container">
-            <p class="placeholder-text">
-              Select a state and year to view detailed seizure data
-            </p>
-          </div>
-        </div>
-
-        <!-- State Trend Chart -->
-        <div class="chart-box" id="state-trend" style="margin-top: 32px"></div>
-      </section>
-    </div>
-
-    <!-- ═══════════════ PAGE: EDA ═══════════════ -->
-    <div id="page-eda" class="page">
-      <section class="section">
-        <div class="section-header">
-          <h2>Exploratory Data Analysis</h2>
-          <p>
-            Select a category to explore visualizations, inferences, and
-            insights
-          </p>
-        </div>
-
-        <!-- EDA Category Tabs -->
-        <div class="eda-tabs">
-          <button class="eda-tab active" data-eda="time">Time-Based</button>
-          <button class="eda-tab" data-eda="geo">Geographic</button>
-          <button class="eda-tab" data-eda="drug">Drug Patterns</button>
-          <button class="eda-tab" data-eda="enforcement">Enforcement</button>
-          <button class="eda-tab" data-eda="border">Border & Coastal</button>
-          <button class="eda-tab" data-eda="advanced">Advanced</button>
-        </div>
-
-        <!-- EDA Panels -->
-        <div id="eda-panel-time" class="eda-panel active">
-          <div class="eda-chart-selector">
-            <button class="eda-chart-btn active" data-chart="time-total">
-              Total Seizures
-            </button>
-            <button class="eda-chart-btn" data-chart="time-drugs">
-              Drug-wise Trends
-            </button>
-            <button class="eda-chart-btn" data-chart="time-growth">
-              Growth Rate
-            </button>
-            <button class="eda-chart-btn" data-chart="time-ma">
-              Moving Average
-            </button>
-          </div>
-          <div class="eda-content">
-            <div id="time-total" class="eda-chart-view active">
-              <div class="chart-box" id="chart-time-total"></div>
-            </div>
-            <div id="time-drugs" class="eda-chart-view">
-              <div class="chart-box" id="chart-time-drugs"></div>
-            </div>
-            <div id="time-growth" class="eda-chart-view">
-              <div class="chart-box" id="chart-time-growth"></div>
-            </div>
-            <div id="time-ma" class="eda-chart-view">
-              <div class="chart-box" id="chart-time-ma"></div>
-            </div>
-          </div>
-          <div class="eda-inferences" id="inf-time"></div>
-        </div>
-
-        <div id="eda-panel-geo" class="eda-panel">
-          <div class="eda-chart-selector">
-            <button class="eda-chart-btn active" data-chart="geo-heat">
-              State Heatmap
-            </button>
-            <button class="eda-chart-btn" data-chart="geo-top10">
-              Top 10 States
-            </button>
-            <button class="eda-chart-btn" data-chart="geo-yearstate">
-              Year × State Heatmap
-            </button>
-            <button class="eda-chart-btn" data-chart="geo-rank">
-              State Ranking
-            </button>
-          </div>
-          <div class="eda-content">
-            <div id="geo-heat" class="eda-chart-view active">
-              <div class="chart-box" id="chart-geo-heat"></div>
-            </div>
-            <div id="geo-top10" class="eda-chart-view">
-              <div class="chart-box" id="chart-geo-top10"></div>
-            </div>
-            <div id="geo-yearstate" class="eda-chart-view">
-              <div class="chart-box" id="chart-geo-yearstate"></div>
-            </div>
-            <div id="geo-rank" class="eda-chart-view">
-              <div class="chart-box" id="chart-geo-rank"></div>
-            </div>
-          </div>
-          <div class="eda-inferences" id="inf-geo"></div>
-        </div>
-
-        <div id="eda-panel-drug" class="eda-panel">
-          <div class="eda-chart-selector">
-            <button class="eda-chart-btn active" data-chart="drug-dist">
-              Drug Distribution
-            </button>
-            <button class="eda-chart-btn" data-chart="drug-stacked">
-              Year-wise Composition
-            </button>
-            <button class="eda-chart-btn" data-chart="drug-corr">
-              Correlation Heatmap
-            </button>
-            <button class="eda-chart-btn" data-chart="drug-diversity">
-              Diversity Histogram
-            </button>
-          </div>
-          <div class="eda-content">
-            <div id="drug-dist" class="eda-chart-view active">
-              <div class="chart-box" id="chart-drug-dist"></div>
-            </div>
-            <div id="drug-stacked" class="eda-chart-view">
-              <div class="chart-box" id="chart-drug-stacked"></div>
-            </div>
-            <div id="drug-corr" class="eda-chart-view">
-              <div class="chart-box" id="chart-drug-corr"></div>
-            </div>
-            <div id="drug-diversity" class="eda-chart-view">
-              <div class="chart-box" id="chart-drug-diversity"></div>
-            </div>
-          </div>
-          <div class="eda-inferences" id="inf-drug"></div>
-        </div>
-
-        <div id="eda-panel-enforcement" class="eda-panel">
-          <div class="eda-chart-selector">
-            <button class="eda-chart-btn active" data-chart="enf-scatter">
-              Cases vs Arrested
-            </button>
-            <button class="eda-chart-btn" data-chart="enf-dist">
-              Arrest Rate Dist.
-            </button>
-            <button class="eda-chart-btn" data-chart="enf-state">
-              State-wise Rate
-            </button>
-            <button class="eda-chart-btn" data-chart="enf-trend">
-              Enforcement Trend
-            </button>
-          </div>
-          <div class="eda-content">
-            <div id="enf-scatter" class="eda-chart-view active">
-              <div class="chart-box" id="chart-enf-scatter"></div>
-            </div>
-            <div id="enf-dist" class="eda-chart-view">
-              <div class="chart-box" id="chart-enf-dist"></div>
-            </div>
-            <div id="enf-state" class="eda-chart-view">
-              <div class="chart-box" id="chart-enf-state"></div>
-            </div>
-            <div id="enf-trend" class="eda-chart-view">
-              <div class="chart-box" id="chart-enf-trend"></div>
-            </div>
-          </div>
-          <div class="eda-inferences" id="inf-enforcement"></div>
-        </div>
-
-        <div id="eda-panel-border" class="eda-panel">
-          <div class="eda-chart-selector">
-            <button class="eda-chart-btn active" data-chart="bord-pie">
-              Border vs Non-Border
-            </button>
-            <button class="eda-chart-btn" data-chart="bord-coastal">
-              Coastal vs Non-Coastal
-            </button>
-            <button class="eda-chart-btn" data-chart="bord-combo">
-              Combined Risk
-            </button>
-          </div>
-          <div class="eda-content">
-            <div id="bord-pie" class="eda-chart-view active">
-              <div class="chart-box" id="chart-bord-pie"></div>
-            </div>
-            <div id="bord-coastal" class="eda-chart-view">
-              <div class="chart-box" id="chart-bord-coastal"></div>
-            </div>
-            <div id="bord-combo" class="eda-chart-view">
-              <div class="chart-box" id="chart-bord-combo"></div>
-            </div>
-          </div>
-          <div class="eda-inferences" id="inf-border"></div>
-        </div>
-
-        <div id="eda-panel-advanced" class="eda-panel">
-          <div class="eda-chart-selector">
-            <button class="eda-chart-btn active" data-chart="adv-box">
-              Distribution (Box)
-            </button>
-            <button class="eda-chart-btn" data-chart="adv-hotspot">
-              Growth Hotspots
-            </button>
-            <button class="eda-chart-btn" data-chart="adv-anomaly">
-              Anomaly Spikes
-            </button>
-          </div>
-          <div class="eda-content">
-            <div id="adv-box" class="eda-chart-view active">
-              <div class="chart-box" id="chart-adv-box"></div>
-            </div>
-            <div id="adv-hotspot" class="eda-chart-view">
-              <div class="chart-box" id="chart-adv-hotspot"></div>
-            </div>
-            <div id="adv-anomaly" class="eda-chart-view">
-              <div class="chart-box" id="chart-adv-anomaly"></div>
-            </div>
-          </div>
-          <div class="eda-inferences" id="inf-advanced"></div>
-        </div>
-      </section>
-    </div>
-
-    <div id="page-ml" class="page">
-<div class="section">
-
-  <div class="section-header">
-    <h2>Machine Learning Insights</h2>
-    <div class="ml-subtext">
-  Clustering groups states into risk categories based on seizure volume and case counts.
-</div>
-  <!-- Filters -->
-  <div class="pill-group">
-    <button onclick="renderML('High Risk')" class="ml-btn" data-type="High Risk">High</button>
-<button onclick="renderML('Medium Risk')" class="ml-btn" data-type="Medium Risk">Medium</button>
-<button onclick="renderML('Low Risk')" class="ml-btn" data-type="Low Risk">Low</button>
+<!-- NAV -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">⬡</span>
+    <span class="brand-name">DrugWatch<em>India</em></span>
   </div>
+  <div class="nav-tabs">
+    <button class="nav-btn active" data-page="home">Overview</button>
+    <button class="nav-btn" data-page="statewise">State Analysis</button>
+    <button class="nav-btn" data-page="eda">EDA</button>
+    <button class="nav-btn" data-page="hypothesis">Hypothesis Lab</button>
+    <button class="nav-btn" data-page="ml">ML Insights</button>
+  </div>
+  <div class="nav-meta">NCB Data 2018–2024</div>
+</nav>
 
-  <!-- Chart -->
-  <div id="ml-clusters" style="margin-top:15px;"></div>
+<!-- ═══════════════ PAGE: HOME ═══════════════ -->
+<div id="page-home" class="page active">
 
-  <!-- Insight -->
-  <div id="ml-insight" class="insight-text"></div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">National Crime Bureau · Intelligence Report</div>
+      <h1 class="hero-title">Drug Seizure<br><span class="accent">Intelligence</span><br>Dashboard</h1>
+      <p class="hero-desc">
+        A comprehensive forensic analysis of drug trafficking patterns across
+        India from 2018 to 2024 — mapping geography, enforcement, and substance trends
+        to uncover how narcotics flow through the nation.
+      </p>
+      <div class="hero-why">
+        <div class="why-card">
+          <div class="why-icon">📍</div>
+          <h4>Why This Project?</h4>
+          <p>India sits at the crossroads of the Golden Crescent and Golden Triangle — two of the world's largest drug-producing zones. Border and coastal states face disproportionate trafficking pressure, yet enforcement data is rarely visualized holistically. This dashboard bridges that gap.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🎯</div>
+          <h4>What We Analyse</h4>
+          <p>7 years · 36 states/UTs · 20+ drug types · enforcement KPIs · geographic risk scoring — all woven into an interactive intelligence interface built on NCB's official seizure records.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🔬</div>
+          <h4>Our Methodology</h4>
+          <p>Feature engineering on raw NCB data: Risk Index (weighted quantity + cases + diversity), Growth Rate (YoY %), Arrest Rate, Drug Diversity score, and Border/Coastal classification for geographic risk.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="h-stat" id="hs-total"></div>
+      <div class="h-stat" id="hs-cases"></div>
+      <div class="h-stat" id="hs-arrested"></div>
+      <div class="h-stat" id="hs-states"></div>
+    </div>
+  </section>
 
-  <!-- 🔮 Forecast Section -->
-<div class="section-header" style="margin-top:40px;">
-  <h2>Forecasting</h2>
-  <p>Select a year and explore future predictions</p>
+  <!-- HOME OVERVIEW CHARTS -->
+  <section class="section">
+    <div class="section-header">
+      <h2>National Snapshot</h2>
+      <p>High-level view across all states and years</p>
+    </div>
+    <div class="chart-grid-2">
+      <div class="chart-box" id="home-trend"></div>
+      <div class="chart-box" id="home-topstates"></div>
+    </div>
+    <div class="chart-grid-2" style="margin-top:24px">
+      <div class="chart-box" id="home-border"></div>
+      <div class="chart-box" id="home-drugs"></div>
+    </div>
+  </section>
+
 </div>
 
-<!-- Year Toggle -->
-<div style="margin: 10px 0;">
-  <label>Select Year:</label>
-  <select id="forecast-year" onchange="updateForecast()">
-    <option>2025</option>
-    <option>2026</option>
-    <option>2027</option>
-    <option>2028</option>
-    <option>2029</option>
-    <option>2030</option>
-    <option>2031</option>
-    <option>2032</option>
-    <option>2033</option>
-    <option>2034</option>
-    <option>2035</option>
-  </select>
+<!-- ═══════════════ PAGE: STATE ANALYSIS ═══════════════ -->
+<div id="page-statewise" class="page">
+
+  <section class="section">
+    <div class="section-header">
+      <h2>State-wise Analysis</h2>
+      <p>Click a state on the map — or use the filters below</p>
+    </div>
+
+    <!-- India Map -->
+    <div class="map-container">
+      <div id="india-map"></div>
+      <div class="map-legend">
+        <div class="legend-label">Low Risk</div>
+        <div class="legend-bar"></div>
+        <div class="legend-label">High Risk</div>
+      </div>
+    </div>
+
+    <!-- State Filter Controls -->
+    <div class="state-controls">
+      <div class="control-group">
+        <label>State / UT</label>
+        <select id="stateFilter"></select>
+      </div>
+      <div class="control-group">
+        <label>Year</label>
+        <select id="yearFilter"></select>
+      </div>
+      <button class="apply-btn" onclick="applyStateFilters()">→ Apply</button>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi" id="kpi-risk"><span class="kpi-label">Risk Index</span><span class="kpi-val" id="risk">—</span></div>
+      <div class="kpi" id="kpi-arrest"><span class="kpi-label">Arrest Rate</span><span class="kpi-val" id="arrest">—</span></div>
+      <div class="kpi" id="kpi-growth"><span class="kpi-label">Growth Rate</span><span class="kpi-val" id="growth">—</span></div>
+      <div class="kpi" id="kpi-diversity"><span class="kpi-label">Drug Diversity</span><span class="kpi-val" id="diversity">—</span></div>
+      <div class="kpi"><span class="kpi-label">Total Cases</span><span class="kpi-val" id="kpi-cases">—</span></div>
+      <div class="kpi"><span class="kpi-label">Total Arrested</span><span class="kpi-val" id="kpi-arrested">—</span></div>
+      <div class="kpi"><span class="kpi-label">Total Qty (kg/units)</span><span class="kpi-val" id="kpi-qty">—</span></div>
+      <div class="kpi"><span class="kpi-label">Border State</span><span class="kpi-val" id="kpi-border">—</span></div>
+      <div class="kpi"><span class="kpi-label">Coastal State</span><span class="kpi-val" id="kpi-coastal">—</span></div>
+    </div>
+
+    <!-- Drug Breakdown Table -->
+    <div class="table-section">
+      <h3 class="table-title">Full Drug Breakdown — <span id="table-state-label">Select a state</span></h3>
+      <div id="drug-table-container">
+        <p class="placeholder-text">Select a state and year to view detailed seizure data</p>
+      </div>
+    </div>
+
+    <!-- State Trend Chart -->
+    <div class="chart-box" id="state-trend" style="margin-top:32px"></div>
+
+  </section>
 </div>
 
-<!-- India Map -->
-<div id="forecast-map" style="height:500px; margin-top:20px;"></div>
+<!-- ═══════════════ PAGE: EDA ═══════════════ -->
+<div id="page-eda" class="page">
+  <section class="section">
+    <div class="section-header">
+      <h2>Exploratory Data Analysis</h2>
+      <p>Select a category to explore visualizations, inferences, and insights</p>
+    </div>
 
-<!-- Chart -->
-<div id="forecast-chart" style="height:400px; margin-top:20px;"></div>
+    <!-- EDA Category Tabs -->
+    <div class="eda-tabs">
+      <button class="eda-tab active" data-eda="time">📈 Time-Based</button>
+      <button class="eda-tab" data-eda="geo">🗺 Geographic</button>
+      <button class="eda-tab" data-eda="drug">💊 Drug Patterns</button>
+      <button class="eda-tab" data-eda="enforcement">🚔 Enforcement</button>
+      <button class="eda-tab" data-eda="border">🌍 Border & Coastal</button>
+      <button class="eda-tab" data-eda="advanced">🔥 Advanced</button>
+    </div>
 
-<!-- Insight -->
-<div id="forecast-insight" class="insight-text"></div>
+    <!-- EDA Panels -->
+    <div id="eda-panel-time" class="eda-panel active">
+      <div class="eda-chart-selector">
+        <button class="eda-chart-btn active" data-chart="time-total">Total Seizures</button>
+        <button class="eda-chart-btn" data-chart="time-drugs">Drug-wise Trends</button>
+        <button class="eda-chart-btn" data-chart="time-growth">Growth Rate</button>
+        <button class="eda-chart-btn" data-chart="time-ma">Moving Average</button>
+      </div>
+      <div class="eda-content">
+        <div id="time-total" class="eda-chart-view active"><div class="chart-box" id="chart-time-total"></div></div>
+        <div id="time-drugs" class="eda-chart-view"><div class="chart-box" id="chart-time-drugs"></div></div>
+        <div id="time-growth" class="eda-chart-view"><div class="chart-box" id="chart-time-growth"></div></div>
+        <div id="time-ma" class="eda-chart-view"><div class="chart-box" id="chart-time-ma"></div></div>
+      </div>
+      <div class="eda-inferences" id="inf-time"></div>
+    </div>
 
+    <div id="eda-panel-geo" class="eda-panel">
+      <div class="eda-chart-selector">
+        <button class="eda-chart-btn active" data-chart="geo-heat">State Heatmap</button>
+        <button class="eda-chart-btn" data-chart="geo-top10">Top 10 States</button>
+        <button class="eda-chart-btn" data-chart="geo-yearstate">Year × State Heatmap</button>
+        <button class="eda-chart-btn" data-chart="geo-rank">State Ranking</button>
+      </div>
+      <div class="eda-content">
+        <div id="geo-heat" class="eda-chart-view active"><div class="chart-box" id="chart-geo-heat"></div></div>
+        <div id="geo-top10" class="eda-chart-view"><div class="chart-box" id="chart-geo-top10"></div></div>
+        <div id="geo-yearstate" class="eda-chart-view"><div class="chart-box" id="chart-geo-yearstate"></div></div>
+        <div id="geo-rank" class="eda-chart-view"><div class="chart-box" id="chart-geo-rank"></div></div>
+      </div>
+      <div class="eda-inferences" id="inf-geo"></div>
+    </div>
 
+    <div id="eda-panel-drug" class="eda-panel">
+      <div class="eda-chart-selector">
+        <button class="eda-chart-btn active" data-chart="drug-dist">Drug Distribution</button>
+        <button class="eda-chart-btn" data-chart="drug-stacked">Year-wise Composition</button>
+        <button class="eda-chart-btn" data-chart="drug-corr">Correlation Heatmap</button>
+        <button class="eda-chart-btn" data-chart="drug-diversity">Diversity Histogram</button>
+      </div>
+      <div class="eda-content">
+        <div id="drug-dist" class="eda-chart-view active"><div class="chart-box" id="chart-drug-dist"></div></div>
+        <div id="drug-stacked" class="eda-chart-view"><div class="chart-box" id="chart-drug-stacked"></div></div>
+        <div id="drug-corr" class="eda-chart-view"><div class="chart-box" id="chart-drug-corr"></div></div>
+        <div id="drug-diversity" class="eda-chart-view"><div class="chart-box" id="chart-drug-diversity"></div></div>
+      </div>
+      <div class="eda-inferences" id="inf-drug"></div>
+    </div>
 
+    <div id="eda-panel-enforcement" class="eda-panel">
+      <div class="eda-chart-selector">
+        <button class="eda-chart-btn active" data-chart="enf-scatter">Cases vs Arrested</button>
+        <button class="eda-chart-btn" data-chart="enf-dist">Arrest Rate Dist.</button>
+        <button class="eda-chart-btn" data-chart="enf-state">State-wise Rate</button>
+        <button class="eda-chart-btn" data-chart="enf-trend">Enforcement Trend</button>
+      </div>
+      <div class="eda-content">
+        <div id="enf-scatter" class="eda-chart-view active"><div class="chart-box" id="chart-enf-scatter"></div></div>
+        <div id="enf-dist" class="eda-chart-view"><div class="chart-box" id="chart-enf-dist"></div></div>
+        <div id="enf-state" class="eda-chart-view"><div class="chart-box" id="chart-enf-state"></div></div>
+        <div id="enf-trend" class="eda-chart-view"><div class="chart-box" id="chart-enf-trend"></div></div>
+      </div>
+      <div class="eda-inferences" id="inf-enforcement"></div>
+    </div>
+
+    <div id="eda-panel-border" class="eda-panel">
+      <div class="eda-chart-selector">
+        <button class="eda-chart-btn active" data-chart="bord-pie">Border vs Non-Border</button>
+        <button class="eda-chart-btn" data-chart="bord-coastal">Coastal vs Non-Coastal</button>
+        <button class="eda-chart-btn" data-chart="bord-combo">Combined Risk</button>
+      </div>
+      <div class="eda-content">
+        <div id="bord-pie" class="eda-chart-view active"><div class="chart-box" id="chart-bord-pie"></div></div>
+        <div id="bord-coastal" class="eda-chart-view"><div class="chart-box" id="chart-bord-coastal"></div></div>
+        <div id="bord-combo" class="eda-chart-view"><div class="chart-box" id="chart-bord-combo"></div></div>
+      </div>
+      <div class="eda-inferences" id="inf-border"></div>
+    </div>
+
+    <div id="eda-panel-advanced" class="eda-panel">
+      <div class="eda-chart-selector">
+        <button class="eda-chart-btn active" data-chart="adv-box">Distribution (Box)</button>
+        <button class="eda-chart-btn" data-chart="adv-hotspot">Growth Hotspots</button>
+        <button class="eda-chart-btn" data-chart="adv-anomaly">Anomaly Spikes</button>
+      </div>
+      <div class="eda-content">
+        <div id="adv-box" class="eda-chart-view active"><div class="chart-box" id="chart-adv-box"></div></div>
+        <div id="adv-hotspot" class="eda-chart-view"><div class="chart-box" id="chart-adv-hotspot"></div></div>
+        <div id="adv-anomaly" class="eda-chart-view"><div class="chart-box" id="chart-adv-anomaly"></div></div>
+      </div>
+      <div class="eda-inferences" id="inf-advanced"></div>
+    </div>
+
+  </section>
 </div>
-    <script src="data.js"></script>
-    <script src="script.js"></script>
-    <script src="ml.js"></script>
-    <script src="eda.js"></script>
+
+<!-- ═══════════════ PAGE: HYPOTHESIS ═══════════════ -->
+<div id="page-hypothesis" class="page">
+  <section class="section">
+    <div class="section-header">
+      <h2>Hypothesis Testing Lab 🧪</h2>
+      <p>Statistical validation of patterns using non-parametric tests</p>
+    </div>
+
+    <!-- Hypothesis Cards -->
+    <div id="hypothesis-container" class="hypothesis-grid">
+      <p class="placeholder-text">Click below to run hypothesis tests</p>
+    </div>
+
+    <!-- Run Button -->
+    <div style="text-align:center; margin-top:20px;">
+      <button class="apply-btn" onclick="loadHypothesis()">Run Tests ⚡</button>
+    </div>
+  </section>
+</div>
+
+<div id="page-ml" class="page">
+  <div class="section">
+
+    <div class="section-header">
+      <h2>Machine Learning Insights</h2>
+      <div class="ml-subtext">
+        Clustering groups states into risk categories based on seizure volume and case counts.
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="pill-group">
+      <button onclick="renderML('High Risk')" class="ml-btn" data-type="High Risk">High</button>
+      <button onclick="renderML('Medium Risk')" class="ml-btn" data-type="Medium Risk">Medium</button>
+      <button onclick="renderML('Low Risk')" class="ml-btn" data-type="Low Risk">Low</button>
+    </div>
+
+    <!-- Chart -->
+    <div id="ml-clusters" style="margin-top:15px;"></div>
+
+    <!-- Insight -->
+    <div id="ml-insight" class="insight-text"></div>
+
+     <!-- 🔮 Forecast Section -->
+      <div class="section-header" style="margin-top:40px;">
+        <h2>Forecasting</h2>
+        <p>Select a year and explore future predictions</p>
+      </div>
+      <!-- Year Toggle -->
+      <div style="margin: 10px 0;">
+        <label>Select Year:</label>
+        <select id="forecast-year" onchange="updateForecast()">
+          <option>2025</option>
+          <option>2026</option>
+          <option>2027</option>
+          <option>2028</option>
+          <option>2029</option>
+          <option>2030</option>
+          <option>2031</option>
+          <option>2032</option>
+          <option>2033</option>
+          <option>2034</option>
+          <option>2035</option>
+        </select>
+      </div>
+      <!-- India Map -->
+      <div id="forecast-map" style="height:500px; margin-top:20px;"></div>
+      <!-- Chart -->
+      <div id="forecast-chart" style="height:400px; margin-top:20px;"></div>
+
+      <!-- Insight -->
+       <div id="forecast-insight" class="insight-text"></div>
+      </div>
     
-  </body>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>DrugWatch India · Data sourced from National Crime Bureau (NCB) Reports · Built for academic analysis</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+<script src="eda.js"></script>
+<script src="hypothesis.js"></script>
+<script src="ml.js  "></script>
+</body>
 </html>
