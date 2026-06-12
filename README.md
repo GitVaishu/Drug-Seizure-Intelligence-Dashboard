@@ -76,36 +76,6 @@ Sudden increase in seizures
 Emerging trafficking routes
 High-risk periods
 
-🏗️ Project Structure
-Drug-Seizure-Intelligence-Dashboard
-│
-├── backend
-│   ├── app.py
-│   ├── hypothesis_testing.py
-│   ├── feature_engineering.py
-│   ├── data_loader.py
-│   │
-│   └── ml_models
-│       ├── clustering.py
-│       ├── forecasting.py
-│       ├── anomaly.py
-│       └── evaluation.py
-│
-├── frontend
-│   ├── index.html
-│   ├── styles.css
-│   ├── script.js
-│   ├── eda.js
-│   ├── hypothesis.js
-│   └── ml.js
-│
-├── data
-│   ├── ncb_final_cleaned_dataset_v2.csv
-│   └── featured_data.csv
-│
-│
-└── requirements.txt
-
 📊 Dataset
 Source: National Crime Bureau (NCB) Annual Reports (2018–2024)
 
